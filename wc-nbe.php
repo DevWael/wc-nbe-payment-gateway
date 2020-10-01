@@ -15,7 +15,7 @@
  * @wordpress-plugin
  * Plugin Name:       WC NBE Payment Gateway
  * Plugin URI:        https://github.com/DevWael/wc-nbe-payment-gateway
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Description:       Payment gateway for national bank of egypt built on woocommerce.
  * Version:           1.0.0
  * Author:            Ahmad Wael
  * Author URI:        https://github.com/DevWael
@@ -36,6 +36,20 @@ if ( ! defined( 'WPINC' ) ) {
  * Rename this for your plugin and update it as you release new versions.
  */
 define( 'WC_NBE_VERSION', '1.0.0' );
+define( 'NBE_DIR', plugin_dir_path( __FILE__ ) );
+/**
+ * Classes autoloader
+ */
+spl_autoload_register( function ( $class_name ) {
+	$classes_dir = NBE_DIR . DIRECTORY_SEPARATOR . 'NBE' . DIRECTORY_SEPARATOR;
+	$class_file  = str_replace( 'NBE', '', $class_name ) . '.php';
+	$class       = $classes_dir . str_replace( '\\', '/', $class_file );
+	if ( file_exists( $class ) ) {
+		require_once $class;
+	}
+
+	return false;
+} );
 
 /**
  * The code that runs during plugin activation.
@@ -74,9 +88,9 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-wc-nbe.php';
  * @since    1.0.0
  */
 function run_wc_nbe() {
-
-	$plugin = new Wc_Nbe();
-	$plugin->run();
-
+	if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+		$plugin = new Wc_Nbe();
+		$plugin->run();
+	}
 }
 run_wc_nbe();

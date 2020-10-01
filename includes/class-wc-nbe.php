@@ -78,6 +78,7 @@ class Wc_Nbe {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
+		$this->nbe_gateway_class();
 
 	}
 
@@ -140,6 +141,14 @@ class Wc_Nbe {
 		$plugin_i18n = new Wc_Nbe_i18n();
 
 		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
+
+	}
+
+	private function nbe_gateway_class() {
+
+		$payment_class = new NBE\WC\WC_Integration();
+
+		$this->loader->add_filter( 'woocommerce_payment_gateways', $payment_class, 'gate_way_class', 10, 1 );
 
 	}
 
